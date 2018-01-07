@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    //定义 进程/作业 控制块 PCB
+    //定义 数据结构 DISK
     typedef struct DISK{        
         int Next_number;    //下一个磁道号
         int distance;       //移动距离

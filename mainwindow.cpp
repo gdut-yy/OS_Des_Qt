@@ -1,3 +1,15 @@
+/**
+* @brief    操作系统课程设计_磁盘调度算法
+* @details  要求：
+*           设计主界面以灵活选择某算法，且以下算法都要实现
+*           1、先来先服务算法（FCFS）
+*           2、最短寻道时间优先算法（SSTF）
+*           3、扫描算法（SCAN）
+*           4、循环扫描算法（CSCAN）
+*           并求出每种算法的平均寻道长度。
+* @author   3115005124_张逸扬
+* @date     2018年1月7日18:35:28
+*/
 #include "mainwindow.h"
 
 #include <QGridLayout>
@@ -9,6 +21,7 @@
 #include <QLineEdit>
 #include <QTableWidget>
 #include <QMessageBox>
+#include <QHeaderView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,17 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
     createDiskPage();
 
     setCentralWidget(diskPage);
-//    QWidget *qwidget = new QWidget();
-//    setCentralWidget(qwidget);
-
-////    QLayout *layout = new QVBoxLayout;
-////    layout->addWidget(diskPage);
-
-//    //设置程序总布局
-//    QGridLayout *mainLayout = new QGridLayout;
-////    mainLayout->addLayout(layout, 0, 0);
-//    mainLayout->addWidget(diskPage, 0, 0);
-//    qwidget->setLayout(mainLayout);
 }
 
 MainWindow::~MainWindow(){
@@ -37,7 +39,7 @@ MainWindow::~MainWindow(){
 //页面布局 实现
 void MainWindow::createDiskPage(){
     diskPage = new QWidget;
-    //
+    //tableGroupBox初始化及布局
     tableGroupBox = new QGroupBox(tr("表格"));
     diskTable = new QTableWidget(9, 2);
 
@@ -47,8 +49,12 @@ void MainWindow::createDiskPage(){
     QStringList tableLabels;
     tableLabels << "被访问的\n下一个磁道号" << "移动距离\n（磁道数）";
     diskTable->setHorizontalHeaderLabels(tableLabels);
+    diskTable->verticalHeader()->hide();   //隐藏垂直标题
+    diskTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    diskTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    //
+
+    //algorithmGroupBox初始化及布局
     algorithmGroupBox = new QGroupBox(tr("算法"));
     FCFSrbutton = new QRadioButton(tr("先来先服务算法（FCFS）"));        //先来先服务算法
     SSTFrbutton = new QRadioButton(tr("最短寻道时间优先算法（SSTF）"));     //最短寻道时间优先算法
@@ -77,7 +83,8 @@ void MainWindow::createDiskPage(){
     suanfaLayout->addWidget(orderGroupBox);
     algorithmGroupBox->setLayout(suanfaLayout);
 
-    //
+
+    //operationGroupBox初始化及布局
     operationGroupBox = new QGroupBox(tr("操作"));
     disknumLabel = new QLabel(tr("当前磁道号："));
     numberEdit = new QLineEdit;      //当前磁道号
@@ -97,7 +104,8 @@ void MainWindow::createDiskPage(){
     caozuoLayout->addWidget(InitButton, 1, 1);
     operationGroupBox->setLayout(caozuoLayout);
 
-    //
+
+    //resultGroupBox初始化及布局
     resultGroupBox = new QGroupBox(tr("结果"));
     moveLabel = new QLabel(tr("移动磁道数："));              //移动磁道数
     move_averageLabel = new QLabel(tr("平均寻道长度："));     //平均寻道长度
@@ -107,13 +115,13 @@ void MainWindow::createDiskPage(){
     resultLayout->addWidget(move_averageLabel);
     resultGroupBox->setLayout(resultLayout);
 
+
     //页面布局
     QGridLayout *pageLayout = new QGridLayout;
     pageLayout->setMargin(0);
     pageLayout->setRowStretch(0, 2);
     pageLayout->setRowStretch(1, 1);
     pageLayout->setRowStretch(2, 1);
-
     pageLayout->addWidget(tableGroupBox, 0, 0, 3, 1);
     pageLayout->addWidget(algorithmGroupBox, 0, 1, 1, 1);
     pageLayout->addWidget(operationGroupBox, 1, 1, 1, 1);
@@ -130,6 +138,7 @@ void MainWindow::Initclick(){
     move_averageLabel->setText(tr("平均寻道长度："));
     disk.clear();
 
+    //预输入数据1
     diskTable->clearContents();
     diskTable->setItem(0, 0, new QTableWidgetItem(QString::number(55)));
     diskTable->setItem(1, 0, new QTableWidgetItem(QString::number(58)));
@@ -143,6 +152,7 @@ void MainWindow::Initclick(){
 
     numberEdit->setText(QString::number(100));
 
+    //预输入数据2
 //    diskTable->clearContents();
 //    diskTable->setItem(0, 0, new QTableWidgetItem(QString::number(86)));
 //    diskTable->setItem(1, 0, new QTableWidgetItem(QString::number(147)));
